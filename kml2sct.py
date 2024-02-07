@@ -17,36 +17,8 @@ def dekachra(input_file, output_file):
             if name_tag is not None and description_tag is not None:
                 description = description_tag.text
                 color = styleUrl_tag.text
-                if description == "Taxiway":
-                    name_tag.text = description # Changes name tag to the description tag
-                    placemark.remove(description_tag)
-                elif description == "RunwayBorder":
-                    name_tag.text = description
-                    placemark.remove(description_tag)
-                elif description == "Stopbar":
-                    name_tag.text = description
-                    placemark.remove(description_tag)
-                elif description == "GrasSurface":
-                    name_tag.text = description
-                    placemark.remove(description_tag)
-                elif description == "Building":
-                    name_tag.text = description
-                    placemark.remove(description_tag)
-                elif description == "RunwayConcrete":
-                    name_tag.text = description
-                    placemark.remove(description_tag)
-                elif description == "ApronSurface":
-                    name_tag.text = description
-                    placemark.remove(description_tag)
-                elif description == "HardSurface1":
-                    if color == "#msn_ylw-pushpin131" or "#msn_ylw-pushpin11":
-                        name_tag.text = description
-                        placemark.remove(description_tag)
-                        placemark.remove(styleUrl_tag)
-                    elif color == "#msn_ylw-pushpin1140" or "#msn_ylw-pushpin191":
-                        name_tag.text = description
-                        placemark.remove(description_tag)
-                        placemark.remove(styleUrl_tag)
+                name_tag.text = "COLOR_"+description
+                placemark.remove(description_tag)
 
         
         tree.write(output_file, encoding="utf-8", xml_declaration=True)
