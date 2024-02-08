@@ -1,7 +1,7 @@
 import struct
 
 # Binary data
-f = open("delhifir.bin", mode="rb")
+f = open("delhiFIR.bin", mode="rb")
  
 # Reading file data with read() method
 
