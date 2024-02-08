@@ -1,10 +1,26 @@
 import xml.etree.ElementTree as ET
 from math import floor
 import os
+import sys
 
-def dekachra(input_file, output_file):
+def init():
+    folder_paths = ["POLY", "GEO", "FREETEXT"]
+    for folder_path in folder_paths:
+        # Check if the folder exists
+        if os.path.exists(folder_path):
+            # If the folder exists, empty it
+            for file_name in os.listdir(folder_path):
+                file_path = os.path.join(folder_path, file_name)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                elif os.path.isdir(file_path):
+                    os.rmdir(file_path)
+        else:
+            os.makedirs(folder_path)
+
+def dekachra(kml_file):
     try:
-        tree = ET.parse(input_file)
+        tree = ET.parse(kml_file)
         root = tree.getroot()
 
         ns = {'ns0': 'http://www.opengis.net/kml/2.2'}  # Define the namespace prefix
@@ -21,10 +37,13 @@ def dekachra(input_file, output_file):
                 placemark.remove(description_tag)
 
         
-        tree.write(output_file, encoding="utf-8", xml_declaration=True)
+        tree.write("output.kml", encoding="utf-8", xml_declaration=True)
 
     except ET.ParseError as e:
         print("System phat gaya: ", e)
+
+def splitter(kml_file):
+    s
 
 def convert_to_degrees_minutes_seconds(latitude, longitude):
     def convert_to_degrees(value, is_longitude=False):
@@ -72,13 +91,18 @@ def extract_coordinates(kml_file):
 
 
 
-
-
 def main():
+    try:
+        kml_file = sys.argv[1]
+    except IndexError:
+        sys.exit("Skill issue")
+
+    dekachra(kml_file)
     # GEO
     # POLYGONS
     # FRETEXT
-    2
+    #init()   #IT WORKS DONT FORGET TO UNCOMMENT
+
 
 if __name__ == "__main__":
     main()
