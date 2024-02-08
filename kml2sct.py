@@ -30,11 +30,9 @@ def dekachra(kml_file):
         for placemark in root.findall('.//ns0:Placemark', ns):  # Use namespace prefix in XPath
             name_tag = placemark.find('ns0:name', ns)  # Use namespace prefix
             description_tag = placemark.find('ns0:description', ns)  # Use namespace prefix
-            styleUrl_tag = placemark.find('ns0:styleUrl', ns)
             
             if name_tag is not None and description_tag is not None:
                 description = description_tag.text
-                color = styleUrl_tag.text
                 name_tag.text = "COLOR_"+description
                 placemark.remove(description_tag)
 
@@ -83,7 +81,7 @@ def splitter(kml_file):
                                         txt_file.write(f"Coordinates: {coordinates}")
                                     txt_file.write("\n")  # Separate entries with a blank line
 
-                                print("Contents of '{}' folder written to '{}'".format(folder_name, txt_filename))
+                                #####print("Contents of '{}' folder written to '{}'".format(folder_name, txt_filename))
             else:
                 print("Folder '{}' not found in the KML file.".format(folder_name))
 
@@ -135,10 +133,18 @@ def extract_coordinates(kml_file):
                                     ese_coords = convert_to_degrees_minutes_seconds(latitude, longitude)
                                     output_file.write(f"{ese_coords}:{airport_code}:{placemark_name}\n")
 
-
-
-
-
+def GEO_converter(txt_file, out_txt):
+    with open(txt_file, "r") as raw_geo, open(out_txt, "w") as parsed_geo:
+        for line in raw_geo:
+            line = line.strip()
+            if len(line) == 4:
+                ICAO = line
+                parsed_geo.write(ICAO+" ")
+            if line.startswith("Name:"):
+                color = line.replace("Name: ", "").strip()
+                parsed_geo.write(color)
+            if line.startswith("Coordinates: "):
+                coordinates = line.replace("Coordinates: ", "").strip()
 
 def main():
     try:
@@ -146,13 +152,18 @@ def main():
     except IndexError:
         sys.exit("Skill issue")
 
+    init()   #IT WORKS DONT FORGET TO UNCOMMENT
     dekachra(kml_file)
     splitter("output.kml")
-    # GEO
-    # POLYGONS
-    # FRETEXT
+    # GEO A(lat, long) B(lat, long)_Color_definition
+    GEO_converter("SCT Entries.txt", "GEO/GEO.txt")
+    # POLYGONS 
+    #   REGIONNAME VEBD GroundLayout
+    #   COLOR_Building     N026.40.42.734 E088.19.53.362
+    #   N026.40.41.944 E088.19.53.444
+    #
+    # FRETEXT Done
     extract_coordinates("output.kml")
-    #init()   #IT WORKS DONT FORGET TO UNCOMMENT
 
 
 if __name__ == "__main__":
