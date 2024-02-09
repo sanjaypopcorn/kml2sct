@@ -135,16 +135,25 @@ def extract_coordinates(kml_file):
 
 def GEO_converter(txt_file, out_txt):
     with open(txt_file, "r") as raw_geo, open(out_txt, "w") as parsed_geo:
+        icao_code = ""
         for line in raw_geo:
             line = line.strip()
+
             if len(line) == 4:
-                ICAO = line
-                parsed_geo.write(ICAO+" ")
-            if line.startswith("Name:"):
-                color = line.replace("Name: ", "").strip()
-                parsed_geo.write(color)
-            if line.startswith("Coordinates: "):
-                coordinates = line.replace("Coordinates: ", "").strip()
+                icao_code = line
+                parsed_geo.write("\n"+icao_code + " ")
+            elif line.startswith("Name:"):
+                color_name = line.split(": ")[1]
+            elif line.startswith("Coordinates:"):
+                coordinates = line.replace("Coordinates: ", "").split()
+                lat1, lon1 = map(float, coordinates[0].split(",")[:2])
+                for i in range(len(coordinates) - 1):
+                    lat2, lon2 = map(float, coordinates[i + 1].split(',')[:2])
+                    lat1_str = convert_to_degrees_minutes_seconds(lon1, lat1)
+                    lon1_str = convert_to_degrees_minutes_seconds(lon2, lat2)
+                    parsed_geo.write(f"{lat1_str.replace(":"," ")} {lon1_str.replace(":"," ")} {color_name}\n")
+                    lat1, lon1 = lat2, lon2 
+
 
 def main():
     try:
@@ -156,6 +165,7 @@ def main():
     dekachra(kml_file)
     splitter("output.kml")
     # GEO A(lat, long) B(lat, long)_Color_definition
+    # B(let, long) C(lat, long)_Color_definition
     GEO_converter("SCT Entries.txt", "GEO/GEO.txt")
     # POLYGONS 
     #   REGIONNAME VEBD GroundLayout
